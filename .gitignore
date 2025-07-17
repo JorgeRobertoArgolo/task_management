@@ -117,3 +117,24 @@ app.*.symbols
 !**/ios/**/default.perspectivev3
 !/packages/flutter_tools/test/data/dart_dependencies_test/**/.packages
 !/dev/ci/**/Gemfile.lock
+
+# Firebase (arquivos sensíveis)
+android/app/google-services.json
+ios/Runner/GoogleService-Info.plist
+
+# VS Code
+.vscode/
+
+# Android Studio / IntelliJ
+.idea/
+*.iml
+
+# Arquivos de ambiente
+.env
+.env.*
+
+# Arquivos temporários extras e sistema
+*.tmp
+*.bak
+.DS_Store
+Thumbs.db

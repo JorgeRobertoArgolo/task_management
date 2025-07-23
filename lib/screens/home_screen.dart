@@ -1,33 +1,27 @@
 import 'package:flutter/material.dart';
-import 'package:task_management/services/date_formatter.dart';
+import 'components/empty_placeholder.dart';
+import 'components/header_app_bar_home.dart';
+import 'components/menu.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  bool hasTasks = false;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              "Agenda de Tarefas",
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 25.0,
-              )
-            ),
-            Text(
-                DateService.obterDataFormatadaAtual(),
-              style: const TextStyle(
-                fontWeight: FontWeight.normal,
-                fontSize: 18.0,
-              )
-            ),
-          ],
-        ),
-      ),
+      appBar: const HeaderAppBar(),
+      drawer: const Menu(),
+      backgroundColor: const Color(0xFFF9FAFB),
+      body: hasTasks ? ListView(
+        children: [],
+      ) : EmptyTaskPlaceholder(),
     );
   }
 }

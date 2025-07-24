@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import '../models/task/task_enum.dart';
 import '../models/task/task_model.dart';
+import '../services/task_form_service.dart';
 
+/// Tela de formulário para criação de nova tarefa.
 class TaskFormScreen extends StatefulWidget {
   final void Function(Task)? onSubmit;
 
@@ -12,7 +14,9 @@ class TaskFormScreen extends StatefulWidget {
 }
 
 class _TaskFormScreenState extends State<TaskFormScreen> {
+  //Validar formulários
   final _formKey = GlobalKey<FormState>();
+  //controllers dos campos de texto
   final _titleController = TextEditingController();
   final _descriptionController = TextEditingController();
 
@@ -20,11 +24,11 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
   DateTime? _selectedDate;
   Frequency _selectedFrequency = Frequency.once;
 
+  /*
+  * Permite selecionar a hora, e atualiza para a hora especificada
+  * */
   void _pickTime() async {
-    final picked = await showTimePicker(
-      context: context,
-      initialTime: TimeOfDay.now(),
-    );
+    final picked = await TaskFormService.selecionarHorario(context);
     if (picked != null) {
       setState(() {
         _selectedTime = picked;
@@ -32,13 +36,11 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
     }
   }
 
+  /*
+  * Permite selecionar a data, e atualiza para a data especificada
+  * */
   void _pickDate() async {
-    final picked = await showDatePicker(
-      context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(2020),
-      lastDate: DateTime(2100),
-    );
+    final picked = await TaskFormService.selecionarData(context);
     if (picked != null) {
       setState(() {
         _selectedDate = picked;
@@ -46,6 +48,9 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
     }
   }
 
+  /*
+  * Valida o formulário
+  * */
   void _submitForm() {
     if (_formKey.currentState!.validate()) {
       final task = Task(

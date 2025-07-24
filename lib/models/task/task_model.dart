@@ -1,5 +1,6 @@
 import 'task_enum.dart';
 
+/// Representa uma tarefa no sistema.
 class Task {
   final String id;
   final String title;

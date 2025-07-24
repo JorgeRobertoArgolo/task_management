@@ -1,21 +1,15 @@
 import 'package:intl/intl.dart';
 
-/*
-* Classe para obter a data atual e alterar para o formato desejado.
-* */
+/// Serviço para manipulação e formatação de datas.
 class DateService {
 
-  /*
-  * Métodoo para obter a data atual
-  * */
+  /// Retorna a data atual formatada.
   static String obterDataFormatadaAtual() {
     final agora = DateTime.now();
     return _formatarData(agora);
   }
 
-  /*
-  * Métodoo privado que formatará a data
-  * */
+  /// Formata uma data no padrão 'quarta-feira, 23 de julho de 2025'.
   static String _formatarData(DateTime data) {
     final formatter = DateFormat("EEEE, d 'de' MMMM 'de' y", 'pt_BR');
     return formatter.format(data);

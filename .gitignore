@@ -138,3 +138,22 @@ ios/Runner/GoogleService-Info.plist
 *.bak
 .DS_Store
 Thumbs.db
+
+# Firebase auto-gerado
+lib/firebase_options.dart
+firebase.json
+
+# Builds e artefatos do Android
+/build/
+**/build/
+.gradle/
+*.iml
+
+# IDEs
+.idea/
+.vscode/
+
+# Outros
+*.log
+*.lock
+

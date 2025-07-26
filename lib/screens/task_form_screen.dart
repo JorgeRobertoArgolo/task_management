@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../models/task/task_enum.dart';
-import '../models/task/task_model.dart';
+import '../features/task/domain/models/task_enum.dart';
+import '../features/task/domain/models/task_model.dart';
 import '../services/task_form_service.dart';
 
 /// Tela de formulário para criação de nova tarefa.

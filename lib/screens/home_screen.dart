@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:task_management/screens/components/task_list.dart';
 import 'components/empty_placeholder.dart';
 import 'components/header_app_bar_home.dart';
 import 'components/menu.dart';
@@ -19,9 +20,7 @@ class _HomeScreenState extends State<HomeScreen> {
       appBar: const HeaderAppBar(),
       drawer: const Menu(),
       backgroundColor: const Color(0xFFF9FAFB),
-      body: hasTasks ? ListView(
-        children: [],
-      ) : EmptyTaskPlaceholder(),
+      body: TaskList(),
     );
   }
 }

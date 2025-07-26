@@ -1,17 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:task_management/features/task/domain/models/task_model.dart';
+import '../../features/task/domain/models/task_enum.dart';
 
 class TaskCard extends StatelessWidget {
-  final String title;
-  final String description;
-  final VoidCallback onEdit;
-  final VoidCallback onDelete;
+  final Task task;
 
   const TaskCard({
     super.key,
-    required this.title,
-    required this.description,
-    required this.onEdit,
-    required this.onDelete,
+    required this.task,
   });
 
   @override
@@ -25,26 +21,41 @@ class TaskCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              children: [
-                Checkbox(value: false, onChanged: (_) {}),
-                Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
-                const Spacer(),
-                IconButton(icon: const Icon(Icons.edit), onPressed: onEdit),
-                IconButton(icon: const Icon(Icons.delete), onPressed: onDelete),
-              ],
+            Text(
+              task.title,
+              style: const TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
             ),
-            const SizedBox(height: 4),
-            Text(description, style: const TextStyle(color: Colors.grey)),
             const SizedBox(height: 8),
-            const Chip(
-              label: Text("Uma vez", style: TextStyle(fontSize: 12)),
-              backgroundColor: Color(0xFFF3F4F6),
-              labelStyle: TextStyle(color: Colors.black),
+            Text(
+              task.description,
+              style: const TextStyle(color: Colors.grey),
+            ),
+            const SizedBox(height: 12),
+            Chip(
+              label: Text(
+                _formatFrequency(task.frequency),
+                style: const TextStyle(fontSize: 12),
+              ),
+              backgroundColor: const Color(0xFFF3F4F6),
+              labelStyle: const TextStyle(color: Colors.black),
             )
           ],
         ),
       ),
     );
+  }
+
+  static String _formatFrequency(Frequency frequency) {
+    switch (frequency) {
+      case Frequency.once:
+        return 'Uma vez';
+      case Frequency.daily:
+        return 'Diariamente';
+      case Frequency.specificDays:
+        return 'Dias específicos';
+    }
   }
 }

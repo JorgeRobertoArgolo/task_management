@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:task_management/helper/route_helper.dart';
 
 class EmptyTaskPlaceholder extends StatelessWidget {
   const EmptyTaskPlaceholder({super.key});
@@ -27,7 +28,7 @@ class EmptyTaskPlaceholder extends StatelessWidget {
             const SizedBox(height: 16),
             OutlinedButton.icon(
               onPressed: () {
-                Get.toNamed('/task-form');
+                Get.toNamed(RouteHelper.getTaskFormScreen());
               },
               icon: const Icon(Icons.add),
               label: const Text("Adicionar primeira tarefa"),

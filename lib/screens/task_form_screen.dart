@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:task_management/features/task/controller/task_controller.dart';
 import '../features/task/domain/models/task_enum.dart';
 import '../features/task/domain/models/task_model.dart';
 import '../util/task_form_service.dart';
@@ -14,6 +16,8 @@ class TaskFormScreen extends StatefulWidget {
 }
 
 class _TaskFormScreenState extends State<TaskFormScreen> {
+  //Controller
+  final TaskController taskController = Get.find<TaskController>();
   //Validar formulários
   final _formKey = GlobalKey<FormState>();
   //controllers dos campos de texto
@@ -51,7 +55,7 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
   /*
   * Valida o formulário
   * */
-  void _submitForm() {
+  void _submitForm() async{
     if (_formKey.currentState!.validate()) {
       final task = Task(
         id: UniqueKey().toString(),
@@ -59,7 +63,9 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
         description: _descriptionController.text,
         frequency: _selectedFrequency,
       );
-      widget.onSubmit?.call(task);
+
+      await taskController.addTask(task);
+
       Navigator.pop(context);
     }
   }

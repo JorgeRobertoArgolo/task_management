@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:task_management/helper/route_helper.dart';
 import 'package:task_management/screens/calendar_screen.dart';
+import 'package:task_management/screens/report_screen.dart';
 
 class Menu extends StatelessWidget {
   const Menu({super.key});
@@ -55,7 +59,9 @@ class Menu extends StatelessWidget {
           ),
           SizedBox(height: 20.0,),
           TextButton.icon(
-            onPressed: () {},
+            onPressed: () {
+              Get.toNamed(RouteHelper.getReportScreen());
+            },
             icon: Icon(Icons.bar_chart, size: 20.0,
                 color: Colors.black),
             label: Text("Relatórios", style: TextStyle(

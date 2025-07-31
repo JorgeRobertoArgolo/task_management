@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get/get_navigation/src/dialog/dialog_route.dart';
 import 'package:task_management/features/task/controller/task_controller.dart';
 import '../features/task/domain/models/task_enum.dart';
 import '../features/task/domain/models/task_model.dart';
 import '../util/task_form_service.dart';
 
-/// Tela de formulário para criação de nova tarefa.
 class TaskFormScreen extends StatefulWidget {
   final void Function(Task)? onSubmit;
 
@@ -24,6 +24,7 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
   TimeOfDay? _selectedTime;
   DateTime? _selectedDate;
   Frequency _selectedFrequency = Frequency.once;
+  final List<String> _selectedWeekDays = [];
 
   Task? _taskParaEditar;
 
@@ -57,6 +58,16 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
     }
   }
 
+  void _toggleWeekDay(String day) {
+    setState(() {
+      if (_selectedWeekDays.contains(day)) {
+        _selectedWeekDays.remove(day);
+      } else {
+        _selectedWeekDays.add(day);
+      }
+    });
+  }
+
   void _submitForm() async {
     if (_formKey.currentState!.validate()) {
       final task = Task(
@@ -65,7 +76,24 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
         description: _descriptionController.text,
         frequency: _selectedFrequency,
         status: false,
+        specificWeekDays:
+        _selectedFrequency == Frequency.specificDays ? _selectedWeekDays : null,
       );
+
+      if (_selectedFrequency == Frequency.specificDays &&
+          _selectedWeekDays.isEmpty) {
+        Get.dialog(
+            AlertDialog(
+              title: const Text("Erro"),
+              content: const Text("Selecione ao menos um dia da semana."),
+              actions: [
+                TextButton(onPressed: () => Get.back(), child: Text("Entendi"))
+              ],
+            )
+        );
+        return;
+      }
+
 
       if (_taskParaEditar != null) {
         await taskController.updateTask(task);
@@ -75,6 +103,19 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
 
       Get.back();
     }
+  }
+
+  Widget _buildWeekDayCheckbox(String label) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Checkbox(
+          value: _selectedWeekDays.contains(label),
+          onChanged: (_) => _toggleWeekDay(label),
+        ),
+        Text(label),
+      ],
+    );
   }
 
   @override
@@ -172,27 +213,53 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
                 ),
               ),
               const SizedBox(height: 16),
-              const Text("Data"),
-              const SizedBox(height: 8),
-              InkWell(
-                onTap: _pickDate,
-                child: InputDecorator(
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        _selectedDate != null
-                            ? "${_selectedDate!.month}/${_selectedDate!.day}/${_selectedDate!.year}"
-                            : "Selecione a data",
+              if (_selectedFrequency == Frequency.once)
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text("Data"),
+                    const SizedBox(height: 8),
+                    InkWell(
+                      onTap: _pickDate,
+                      child: InputDecorator(
+                        decoration: const InputDecoration(
+                          border: OutlineInputBorder(),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              _selectedDate != null
+                                  ? "${_selectedDate!.month}/${_selectedDate!.day}/${_selectedDate!.year}"
+                                  : "Selecione a data",
+                            ),
+                            const Icon(Icons.calendar_today),
+                          ],
+                        ),
                       ),
-                      const Icon(Icons.calendar_today),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-              ),
+              if (_selectedFrequency == Frequency.specificDays)
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text("Dias da Semana"),
+                    const SizedBox(height: 8),
+                    Wrap(
+                      spacing: 8.0,
+                      children: [
+                        _buildWeekDayCheckbox("Dom"),
+                        _buildWeekDayCheckbox("Seg"),
+                        _buildWeekDayCheckbox("Ter"),
+                        _buildWeekDayCheckbox("Qua"),
+                        _buildWeekDayCheckbox("Qui"),
+                        _buildWeekDayCheckbox("Sex"),
+                        _buildWeekDayCheckbox("Sáb"),
+                      ],
+                    )
+                  ],
+                ),
               const SizedBox(height: 24),
               Row(
                 children: [

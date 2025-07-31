@@ -1,29 +1,33 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:task_management/features/task/domain/models/task_enum.dart';
 
-import 'task_enum.dart';
-
-/// Representa uma tarefa no sistema.
 class Task {
   final String id;
   final String title;
   final String description;
   final Frequency frequency;
-  late final bool status;
+  final bool status;
+  final List<String>? specificWeekDays;
 
   Task({
     required this.id,
     required this.title,
     required this.description,
     required this.frequency,
-    required this.status
+    required this.status,
+    this.specificWeekDays,
   });
 
-  //Converte um objeto Task para em um Map para o Firestore
   Map<String, dynamic> toMap() {
-    return {'title' : title, 'description' : description, 'frequency': frequency.name, 'status': status};
+    return {
+      'title': title,
+      'description': description,
+      'frequency': frequency.name,
+      'status': status,
+      'specificWeekDays': specificWeekDays,
+    };
   }
 
-  //Cria um objeto Task a partir de um DocumentSnapshot do Firestore
   factory Task.fromFirestore(DocumentSnapshot doc) {
     Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
     return Task(
@@ -32,9 +36,12 @@ class Task {
       description: data['description'] ?? '',
       frequency: _stringToFrequency(data['frequency']),
       status: data['status'] ?? false,
+      specificWeekDays: data['specificWeekDays'] != null
+          ? List<String>.from(data['specificWeekDays'])
+          : null,
     );
   }
-  //Conversão do enum para o Firestore
+
   static Frequency _stringToFrequency(String? value) {
     switch (value) {
       case 'once':
@@ -44,7 +51,7 @@ class Task {
       case 'specificDays':
         return Frequency.specificDays;
       default:
-        return Frequency.once; // ou lançar um erro
+        return Frequency.once;
     }
   }
 }

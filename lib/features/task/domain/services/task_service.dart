@@ -18,4 +18,7 @@ class TaskService implements TaskServiceInterface {
 
   @override
   Future<void> delete(String id) => repository.delete(id);
+
+  @override
+  Future<void> update(Task task) => repository.update(task);
 }

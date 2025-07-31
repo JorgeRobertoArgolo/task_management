@@ -5,4 +5,5 @@ abstract class TaskServiceInterface {
   Future<void> delete(String id);
   Stream<List<Task>> findAll();
   Future<Task?> findById(String id);
+  Future<void> update(Task task);
 }

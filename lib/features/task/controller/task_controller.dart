@@ -33,5 +33,9 @@ class TaskController extends GetxController {
     await taskService.delete(id);
   }
 
+  Future<void> updateTask(Task task) async {
+    await taskService.update(task);
+  }
+
 
 }

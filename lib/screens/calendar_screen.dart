@@ -28,7 +28,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
     _selectedDay = _focusedDay;
     _selectedTasks = ValueNotifier(_getTasksForDay(_selectedDay!));
 
-    taskController.tasks.stream.listen((_) {
+    taskController.tasks.stream.listen((listaTotalDeTarefas) {
       if (mounted) {
         _selectedTasks.value = _getTasksForDay(_selectedDay!);
       }
@@ -45,17 +45,27 @@ class _CalendarScreenState extends State<CalendarScreen> {
     const weekDayMap = {
       "Seg": 1, "Ter": 2, "Qua": 3, "Qui": 4, "Sex": 5, "Sáb": 6, "Dom": 7
     };
+
     return taskController.tasks.where((task) {
-      if (task.frequency == Frequency.daily) return true;
+      if (task.frequency == Frequency.daily) {
+        return true;
+      }
+
       if (task.frequency == Frequency.once) {
-        return task.date != null && isSameDay(task.date, day);
+        final bool pertenceAoDia = task.date != null && isSameDay(task.date, day);
+        return pertenceAoDia;
       }
+
       if (task.frequency == Frequency.specificDays) {
-        final int calendarWeekday = day.weekday;
-        return task.specificWeekDays
-            ?.any((d) => weekDayMap[d] == calendarWeekday) ??
-            false;
+        final int diaDaSemanaCalendario = day.weekday;
+        if (task.specificWeekDays == null || task.specificWeekDays!.isEmpty) {
+          return false;
+        }
+        final bool pertenceAoDia = task.specificWeekDays!
+            .any((d) => weekDayMap[d] == diaDaSemanaCalendario);
+        return pertenceAoDia;
       }
+
       return false;
     }).toList();
   }
@@ -185,7 +195,8 @@ class _CalendarScreenState extends State<CalendarScreen> {
           ValueListenableBuilder<List<Task>>(
             valueListenable: _selectedTasks,
             builder: (context, tasks, _) {
-              final sortedTasks = tasks..sort((a, b) => a.status ? 1 : -1);
+              final sortedTasks = [...tasks]..sort((a, b) => a.status ? 1 : -1);
+
               return AnimatedSwitcher(
                 duration: const Duration(milliseconds: 300),
                 child: sortedTasks.isEmpty

@@ -11,13 +11,7 @@ class TaskCard extends StatelessWidget {
   TaskCard({super.key, required this.task});
 
   void _updateTaskStatus() async {
-    final updatedTask = Task(
-      id: task.id,
-      title: task.title,
-      description: task.description,
-      frequency: task.frequency,
-      status: !task.status,
-    );
+    final updatedTask = task.copyWith(status: !task.status);
     await taskController.updateTask(updatedTask);
   }
 

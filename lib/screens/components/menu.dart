@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:task_management/screens/calendar_screen.dart';
 
 class Menu extends StatelessWidget {
   const Menu({super.key});
@@ -26,7 +27,9 @@ class Menu extends StatelessWidget {
           ),
           SizedBox(height: 20.0,),
           TextButton.icon(
-            onPressed: () {},
+            onPressed: () {
+              Navigator.pop(context);
+            },
             icon: Icon(Icons.calendar_today, size: 20.0,
                 color: Colors.black),
             label: Text("Hoje", style: TextStyle(
@@ -36,7 +39,13 @@ class Menu extends StatelessWidget {
           ),
           SizedBox(height: 20.0,),
           TextButton.icon(
-            onPressed: () {},
+            onPressed: () {
+              Navigator.pop(context);
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const CalendarScreen()),
+              );
+            },
             icon: Icon(Icons.calendar_month, size: 20.0,
                 color: Colors.black),
             label: Text("Calendário", style: TextStyle(

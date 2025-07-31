@@ -78,6 +78,7 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
         status: false,
         specificWeekDays:
         _selectedFrequency == Frequency.specificDays ? _selectedWeekDays : null,
+        date: _selectedFrequency == Frequency.once ? _selectedDate : null,
       );
 
       if (_selectedFrequency == Frequency.specificDays &&

@@ -7,6 +7,7 @@ class Task {
   final String description;
   final Frequency frequency;
   final bool status;
+  final DateTime? date;
   final List<String>? specificWeekDays;
 
   Task({
@@ -15,6 +16,7 @@ class Task {
     required this.description,
     required this.frequency,
     required this.status,
+    this.date,
     this.specificWeekDays,
   });
 
@@ -24,8 +26,29 @@ class Task {
       'description': description,
       'frequency': frequency.name,
       'status': status,
+      'date': date != null ? Timestamp.fromDate(date!) : null,
       'specificWeekDays': specificWeekDays,
     };
+  }
+
+  Task copyWith({
+    String? id,
+    String? title,
+    String? description,
+    Frequency? frequency,
+    bool? status,
+    DateTime? date,
+    List<String>? specificWeekDays,
+  }) {
+    return Task(
+      id: id ?? this.id,
+      title: title ?? this.title,
+      description: description ?? this.description,
+      frequency: frequency ?? this.frequency,
+      status: status ?? this.status,
+      date: date ?? this.date,
+      specificWeekDays: specificWeekDays ?? this.specificWeekDays,
+    );
   }
 
   factory Task.fromFirestore(DocumentSnapshot doc) {
@@ -36,6 +59,7 @@ class Task {
       description: data['description'] ?? '',
       frequency: _stringToFrequency(data['frequency']),
       status: data['status'] ?? false,
+      date: data['date'] != null ? (data['date'] as Timestamp).toDate() : null,
       specificWeekDays: data['specificWeekDays'] != null
           ? List<String>.from(data['specificWeekDays'])
           : null,

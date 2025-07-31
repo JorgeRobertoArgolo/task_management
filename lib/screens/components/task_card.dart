@@ -23,99 +23,118 @@ class TaskCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    const backgroundColor = Colors.white;
+    const borderColor = Color(0xFFE5E7EB);
+    const primaryColor = Color(0xFF6366F1);
+    const textColor = Color(0xFF111827);
+    const mutedTextColor = Color(0xFF6B7280);
 
-    return Card(
-      margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-      elevation: 1,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Checkbox(
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 8),
+      decoration: BoxDecoration(
+        color: backgroundColor,
+        border: Border.all(color: borderColor),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Transform.scale(
+                scale: 1.2,
+                child: Checkbox(
                   value: task.status,
+                  activeColor: primaryColor,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(4),
+                  ),
                   onChanged: (_) => _updateTaskStatus(),
                 ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        task.title,
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          decoration: !task.status ? TextDecoration.none : TextDecoration.lineThrough
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        task.description,
-                        style: const TextStyle(
-                          fontSize: 14,
-                          color: Colors.grey,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                Row(
-                  mainAxisSize: MainAxisSize.min,
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    IconButton(
-                      tooltip: "Editar",
-                      onPressed: () => Get.toNamed('/task-form', arguments: task),
-                      icon: const Icon(Icons.edit, size: 20),
+                    Text(
+                      task.title,
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        color: textColor,
+                        decoration: task.status
+                            ? TextDecoration.lineThrough
+                            : TextDecoration.none,
+                      ),
                     ),
-                    IconButton(
-                      tooltip: "Excluir",
-                      onPressed: () {
-                        Get.dialog(
-                          AlertDialog(
-                            title: const Text("Excluir tarefa"),
-                            content: const Text("Tem certeza que deseja excluir esta tarefa?"),
-                            actions: [
-                              TextButton(
-                                onPressed: () => Get.back(),
-                                child: const Text("Cancelar"),
-                              ),
-                              TextButton(
-                                onPressed: () {
-                                  taskController.deleteTask(task.id);
-                                  Get.back();
-                                },
-                                child: const Text("Excluir"),
-                              ),
-                            ],
-                          ),
-                        );
-                      },
-                      icon: const Icon(Icons.delete, size: 20),
+                    const SizedBox(height: 4),
+                    Text(
+                      task.description,
+                      style: const TextStyle(
+                        fontSize: 14,
+                        color: mutedTextColor,
+                      ),
                     ),
                   ],
                 ),
-              ],
-            ),
-            const SizedBox(height: 12),
-            Chip(
-              label: Text(
-                _formatFrequency(task.frequency),
-                style: const TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.bold,
-                ),
               ),
-              backgroundColor: const Color(0xFFF3F4F6),
-              labelStyle: const TextStyle(color: Colors.black),
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+              const SizedBox(width: 12),
+              Row(
+                children: [
+                  _iconButton(
+                    icon: Icons.edit_outlined,
+                    tooltip: "Editar",
+                    onPressed: () =>
+                        Get.toNamed('/task-form', arguments: task),
+                  ),
+                  const SizedBox(width: 4),
+                  _iconButton(
+                    icon: Icons.delete_outline,
+                    tooltip: "Excluir",
+                    onPressed: () {
+                      Get.dialog(
+                        AlertDialog(
+                          title: const Text("Excluir tarefa"),
+                          content: const Text(
+                              "Tem certeza que deseja excluir esta tarefa?"),
+                          actions: [
+                            TextButton(
+                              onPressed: () => Get.back(),
+                              child: const Text("Cancelar"),
+                            ),
+                            TextButton(
+                              onPressed: () {
+                                taskController.deleteTask(task.id);
+                                Get.back();
+                              },
+                              child: const Text("Excluir"),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
+                ],
+              )
+            ],
+          ),
+          const SizedBox(height: 12),
+          Chip(
+            label: Text(
+              _formatFrequency(task.frequency),
+              style: const TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+              ),
             ),
-          ],
-        ),
+            labelStyle: const TextStyle(color: textColor),
+            backgroundColor: const Color(0xFFF3F4F6),
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
+            visualDensity: VisualDensity.compact,
+          ),
+        ],
       ),
     );
   }
@@ -129,5 +148,19 @@ class TaskCard extends StatelessWidget {
       case Frequency.specificDays:
         return 'Dias específicos';
     }
+  }
+
+  Widget _iconButton({
+    required IconData icon,
+    required VoidCallback onPressed,
+    String? tooltip,
+  }) {
+    return IconButton(
+      visualDensity: VisualDensity.compact,
+      splashRadius: 20,
+      tooltip: tooltip,
+      icon: Icon(icon, size: 20, color: Colors.grey[600]),
+      onPressed: onPressed,
+    );
   }
 }

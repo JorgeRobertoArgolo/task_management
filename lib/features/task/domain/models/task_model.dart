@@ -8,17 +8,19 @@ class Task {
   final String title;
   final String description;
   final Frequency frequency;
+  late final bool status;
 
   Task({
     required this.id,
     required this.title,
     required this.description,
     required this.frequency,
+    required this.status
   });
 
   //Converte um objeto Task para em um Map para o Firestore
   Map<String, dynamic> toMap() {
-    return {'title' : title, 'description' : description, 'frequency': frequency.name};
+    return {'title' : title, 'description' : description, 'frequency': frequency.name, 'status': status};
   }
 
   //Cria um objeto Task a partir de um DocumentSnapshot do Firestore
@@ -29,6 +31,7 @@ class Task {
       title: data['title'] ?? '',
       description: data['description'] ?? '',
       frequency: _stringToFrequency(data['frequency']),
+      status: data['status'] ?? false,
     );
   }
   //Conversão do enum para o Firestore

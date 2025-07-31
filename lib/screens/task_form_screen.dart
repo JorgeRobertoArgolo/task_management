@@ -64,6 +64,7 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
         title: _titleController.text,
         description: _descriptionController.text,
         frequency: _selectedFrequency,
+        status: false,
       );
 
       if (_taskParaEditar != null) {
@@ -72,7 +73,7 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
         await taskController.addTask(task);
       }
 
-      Navigator.pop(context);
+      Get.back();
     }
   }
 

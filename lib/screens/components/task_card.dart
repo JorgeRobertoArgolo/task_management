@@ -5,13 +5,24 @@ import '../../features/task/domain/models/task_enum.dart';
 import '../../features/task/domain/models/task_model.dart';
 
 class TaskCard extends StatelessWidget {
+  final TaskController taskController = Get.find<TaskController>();
   final Task task;
 
-  const TaskCard({super.key, required this.task});
+  TaskCard({super.key, required this.task});
+
+  void _updateTaskStatus() async {
+    final updatedTask = Task(
+      id: task.id,
+      title: task.title,
+      description: task.description,
+      frequency: task.frequency,
+      status: !task.status,
+    );
+    await taskController.updateTask(updatedTask);
+  }
 
   @override
   Widget build(BuildContext context) {
-    final TaskController controller = Get.find();
 
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
@@ -26,8 +37,8 @@ class TaskCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Checkbox(
-                  value: false,
-                  onChanged: (_) {},
+                  value: task.status,
+                  onChanged: (_) => _updateTaskStatus(),
                 ),
                 const SizedBox(width: 8),
                 Expanded(
@@ -36,9 +47,10 @@ class TaskCard extends StatelessWidget {
                     children: [
                       Text(
                         task.title,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
+                          decoration: !task.status ? TextDecoration.none : TextDecoration.lineThrough
                         ),
                       ),
                       const SizedBox(height: 4),
@@ -74,7 +86,7 @@ class TaskCard extends StatelessWidget {
                               ),
                               TextButton(
                                 onPressed: () {
-                                  controller.deleteTask(task.id);
+                                  taskController.deleteTask(task.id);
                                   Get.back();
                                 },
                                 child: const Text("Excluir"),

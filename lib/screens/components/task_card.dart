@@ -72,7 +72,7 @@ class TaskCard extends StatelessWidget {
                               ),
                               TextButton(
                                 onPressed: () {
-                                  //controller.delete(task.id);
+                                  controller.deleteTask(task.id);
                                   Get.back();
                                 },
                                 child: const Text("Excluir"),

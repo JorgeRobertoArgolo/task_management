@@ -29,5 +29,9 @@ class TaskController extends GetxController {
     return taskService.findAll();
   }
 
+  Future<void> deleteTask(String id) async {
+    await taskService.delete(id);
+  }
+
 
 }

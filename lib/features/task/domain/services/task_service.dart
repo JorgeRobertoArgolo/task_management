@@ -15,4 +15,7 @@ class TaskService implements TaskServiceInterface {
 
   @override
   Future<Task?> findById(String id) => repository.findById(id);
+
+  @override
+  Future<void> delete(String id) => repository.delete(id);
 }

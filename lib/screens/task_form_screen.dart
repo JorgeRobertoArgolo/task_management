@@ -16,11 +16,8 @@ class TaskFormScreen extends StatefulWidget {
 }
 
 class _TaskFormScreenState extends State<TaskFormScreen> {
-  //Controller
   final TaskController taskController = Get.find<TaskController>();
-  //Validar formulários
   final _formKey = GlobalKey<FormState>();
-  //controllers dos campos de texto
   final _titleController = TextEditingController();
   final _descriptionController = TextEditingController();
 
@@ -28,9 +25,20 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
   DateTime? _selectedDate;
   Frequency _selectedFrequency = Frequency.once;
 
-  /*
-  * Permite selecionar a hora, e atualiza para a hora especificada
-  * */
+  Task? _taskParaEditar;
+
+  @override
+  void initState() {
+    super.initState();
+    final arg = Get.arguments;
+    if (arg is Task) {
+      _taskParaEditar = arg;
+      _titleController.text = arg.title;
+      _descriptionController.text = arg.description;
+      _selectedFrequency = arg.frequency;
+    }
+  }
+
   void _pickTime() async {
     final picked = await TaskFormService.selecionarHorario(context);
     if (picked != null) {
@@ -40,9 +48,6 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
     }
   }
 
-  /*
-  * Permite selecionar a data, e atualiza para a data especificada
-  * */
   void _pickDate() async {
     final picked = await TaskFormService.selecionarData(context);
     if (picked != null) {
@@ -52,19 +57,20 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
     }
   }
 
-  /*
-  * Valida o formulário
-  * */
-  void _submitForm() async{
+  void _submitForm() async {
     if (_formKey.currentState!.validate()) {
       final task = Task(
-        id: UniqueKey().toString(),
+        id: _taskParaEditar?.id ?? UniqueKey().toString(),
         title: _titleController.text,
         description: _descriptionController.text,
         frequency: _selectedFrequency,
       );
 
-      await taskController.addTask(task);
+      if (_taskParaEditar != null) {
+        await taskController.updateTask(task);
+      } else {
+        await taskController.addTask(task);
+      }
 
       Navigator.pop(context);
     }

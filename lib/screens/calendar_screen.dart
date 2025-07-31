@@ -6,7 +6,6 @@ import 'package:task_management/features/task/controller/task_controller.dart';
 import 'package:task_management/features/task/domain/models/task_model.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:task_management/features/task/domain/models/task_enum.dart';
-
 import 'components/task_card.dart';
 
 class CalendarScreen extends StatefulWidget {

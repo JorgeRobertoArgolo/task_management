@@ -4,6 +4,30 @@ import '../../features/task/controller/task_controller.dart';
 import '../../features/task/domain/models/task_enum.dart';
 import '../../features/task/domain/models/task_model.dart';
 
+class AppColors {
+  static const background = Color(0xFFF7F7F7);
+  static const primaryText = Color(0xFF1D2D44);
+  static const secondaryText = Color(0xFF747474);
+  static const cardBackground = Color(0xFFFFFFFF);
+  static const accent = Color(0xFF0A84FF);
+  static const error = Color(0xFFD93F3F);
+}
+
+class AppTextStyles {
+  static const TextStyle bodyText = TextStyle(
+    fontSize: 16,
+    fontWeight: FontWeight.w600,
+    color: AppColors.primaryText,
+  );
+
+  static const TextStyle secondaryBodyText = TextStyle(
+    fontSize: 14,
+    color: AppColors.secondaryText,
+    fontWeight: FontWeight.w400,
+  );
+}
+
+
 class TaskCard extends StatelessWidget {
   final TaskController taskController = Get.find<TaskController>();
   final Task task;
@@ -11,122 +35,165 @@ class TaskCard extends StatelessWidget {
   TaskCard({super.key, required this.task});
 
   void _updateTaskStatus() async {
+
     final updatedTask = task.copyWith(status: !task.status);
+
     await taskController.updateTask(updatedTask);
+
   }
 
   @override
   Widget build(BuildContext context) {
-    const backgroundColor = Colors.white;
-    const borderColor = Color(0xFFE5E7EB);
-    const primaryColor = Color(0xFF6366F1);
-    const textColor = Color(0xFF111827);
-    const mutedTextColor = Color(0xFF6B7280);
-
     return Container(
-      margin: const EdgeInsets.symmetric(vertical: 8),
       decoration: BoxDecoration(
-        color: backgroundColor,
-        border: Border.all(color: borderColor),
+        color: AppColors.cardBackground,
         borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.04),
+            blurRadius: 15,
+            offset: const Offset(0, 4),
+          )
+        ],
       ),
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Transform.scale(
-                scale: 1.2,
-                child: Checkbox(
-                  value: task.status,
-                  activeColor: primaryColor,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(4),
-                  ),
-                  onChanged: (_) => _updateTaskStatus(),
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      task.title,
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                        color: textColor,
-                        decoration: task.status
-                            ? TextDecoration.lineThrough
-                            : TextDecoration.none,
-                      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(12),
+          onTap: _updateTaskStatus,
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+
+                Padding(
+                  padding: const EdgeInsets.only(top: 2.0),
+                  child: Transform.scale(
+                    scale: 1.3,
+                    child: Checkbox(
+                      value: task.status,
+                      onChanged: (_) => _updateTaskStatus(),
+                      activeColor: AppColors.accent,
+                      shape: const CircleBorder(),
+                      side: BorderSide(color: Colors.grey.shade300, width: 2),
+                      visualDensity: VisualDensity.compact,
                     ),
-                    const SizedBox(height: 4),
-                    Text(
-                      task.description,
-                      style: const TextStyle(
-                        fontSize: 14,
-                        color: mutedTextColor,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(width: 12),
-              Row(
-                children: [
-                  _iconButton(
-                    icon: Icons.edit_outlined,
-                    tooltip: "Editar",
-                    onPressed: () =>
-                        Get.toNamed('/task-form', arguments: task),
                   ),
-                  const SizedBox(width: 4),
-                  _iconButton(
-                    icon: Icons.delete_outline,
-                    tooltip: "Excluir",
-                    onPressed: () {
-                      Get.dialog(
-                        AlertDialog(
-                          title: const Text("Excluir tarefa"),
-                          content: const Text(
-                              "Tem certeza que deseja excluir esta tarefa?"),
-                          actions: [
-                            TextButton(
-                              onPressed: () => Get.back(),
-                              child: const Text("Cancelar"),
-                            ),
-                            TextButton(
-                              onPressed: () {
-                                taskController.deleteTask(task.id);
-                                Get.back();
-                              },
-                              child: const Text("Excluir"),
-                            ),
-                          ],
+                ),
+                const SizedBox(width: 12),
+
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        task.title,
+                        style: AppTextStyles.bodyText.copyWith(
+                          color: task.status ? AppColors.secondaryText : AppColors.primaryText,
+                          decoration: task.status ? TextDecoration.lineThrough : TextDecoration.none,
+                          decorationColor: AppColors.secondaryText,
                         ),
-                      );
-                    },
+                      ),
+                      if (task.description.isNotEmpty)
+                        Padding(
+                          padding: const EdgeInsets.only(top: 4.0),
+                          child: Text(
+                            task.description,
+                            style: AppTextStyles.secondaryBodyText.copyWith(
+                              color: task.status ? AppColors.secondaryText.withOpacity(0.8) : AppColors.secondaryText,
+                            ),
+                          ),
+                        ),
+                      const SizedBox(height: 12),
+
+                      _buildFrequencyChip(),
+                    ],
                   ),
-                ],
-              )
+                ),
+                const SizedBox(width: 4),
+                _buildActionMenu(context),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildFrequencyChip() {
+    return Chip(
+      label: Text(_formatFrequency(task.frequency)),
+      labelStyle: TextStyle(
+        color: AppColors.accent,
+        fontWeight: FontWeight.w600,
+        fontSize: 11,
+      ),
+      backgroundColor: AppColors.accent.withOpacity(0.1),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+      visualDensity: VisualDensity.compact,
+      side: BorderSide.none,
+    );
+  }
+
+  Widget _buildActionMenu(BuildContext context) {
+    return PopupMenuButton<String>(
+      icon: const Icon(Icons.more_horiz_rounded, color: AppColors.secondaryText),
+      onSelected: (value) {
+        if (value == 'edit') {
+          Get.toNamed('/task-form', arguments: task);
+        } else if (value == 'delete') {
+          _showDeleteConfirmationDialog(context);
+        }
+      },
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+        const PopupMenuItem<String>(
+          value: 'edit',
+          child: Row(
+            children: [
+              Icon(Icons.edit_outlined, size: 20, color: AppColors.primaryText),
+              SizedBox(width: 8),
+              Text('Editar'),
             ],
           ),
-          const SizedBox(height: 12),
-          Chip(
-            label: Text(
-              _formatFrequency(task.frequency),
-              style: const TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.w600,
-              ),
+        ),
+        const PopupMenuItem<String>(
+          value: 'delete',
+          child: Row(
+            children: [
+              Icon(Icons.delete_outline, size: 20, color: AppColors.error),
+              SizedBox(width: 8),
+              Text('Excluir', style: TextStyle(color: AppColors.error)),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  void _showDeleteConfirmationDialog(BuildContext context) {
+    Get.dialog(
+      AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: const Text("Excluir Tarefa", style: AppTextStyles.bodyText),
+        content: const Text("Esta ação não pode ser desfeita.", style: AppTextStyles.secondaryBodyText),
+        actionsPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        actions: [
+          TextButton(
+            onPressed: () => Get.back(),
+            child: const Text("Cancelar", style: TextStyle(color: AppColors.secondaryText, fontWeight: FontWeight.bold)),
+          ),
+          TextButton(
+            onPressed: () {
+              taskController.deleteTask(task.id);
+              Get.back();
+            },
+            style: TextButton.styleFrom(
+              backgroundColor: AppColors.error.withOpacity(0.1),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
             ),
-            labelStyle: const TextStyle(color: textColor),
-            backgroundColor: const Color(0xFFF3F4F6),
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
-            visualDensity: VisualDensity.compact,
+            child: const Text("Excluir", style: TextStyle(color: AppColors.error, fontWeight: FontWeight.bold)),
           ),
         ],
       ),
@@ -135,26 +202,9 @@ class TaskCard extends StatelessWidget {
 
   static String _formatFrequency(Frequency frequency) {
     switch (frequency) {
-      case Frequency.once:
-        return 'Uma vez';
-      case Frequency.daily:
-        return 'Diariamente';
-      case Frequency.specificDays:
-        return 'Dias específicos';
+      case Frequency.once: return 'Uma vez';
+      case Frequency.daily: return 'Diariamente';
+      case Frequency.specificDays: return 'Dias específicos';
     }
-  }
-
-  Widget _iconButton({
-    required IconData icon,
-    required VoidCallback onPressed,
-    String? tooltip,
-  }) {
-    return IconButton(
-      visualDensity: VisualDensity.compact,
-      splashRadius: 20,
-      tooltip: tooltip,
-      icon: Icon(icon, size: 20, color: Colors.grey[600]),
-      onPressed: onPressed,
-    );
   }
 }

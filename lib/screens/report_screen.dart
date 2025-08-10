@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import '../../features/task/controller/task_controller.dart';
 import '../../features/task/domain/models/task_model.dart';
 import 'components/menu.dart';
+import 'components/task_card.dart';
 
 class AppColors {
   static const background = Color(0xFFF7F7F7);
@@ -383,87 +384,11 @@ class _ReportScreenState extends State<ReportScreen> {
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
           itemCount: sortedTasks.length,
-          itemBuilder: (_, index) => _buildTaskItem(sortedTasks[index]),
+          itemBuilder: (_, index) => TaskCard(task: sortedTasks[index]),
           separatorBuilder: (_, __) => const SizedBox(height: 12),
         ),
       );
     });
-  }
-
-  Widget _buildTaskItem(Task task) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: AppColors.cardBackground,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 20,
-            offset: const Offset(0, 5),
-          ),
-        ],
-      ),
-      child: Row(
-        children: [
-          Container(
-            width: 24,
-            height: 24,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: task.status ? Colors.green : Colors.transparent,
-              border: Border.all(
-                color: task.status ? Colors.green : AppColors.secondaryText,
-                width: 2,
-              ),
-            ),
-            child: task.status
-                ? const Icon(Icons.check, color: Colors.white, size: 16)
-                : null,
-          ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  task.title,
-                  style: AppTextStyles.bodyText.copyWith(
-                    decoration: task.status ? TextDecoration.lineThrough : null,
-                    color: task.status ? AppColors.secondaryText : AppColors.primaryText,
-                  ),
-                ),
-                if (task.description.isNotEmpty) ...[
-                  const SizedBox(height: 4),
-                  Text(
-                    task.description,
-                    style: AppTextStyles.secondaryBodyText.copyWith(fontSize: 14),
-                  ),
-                ],
-                if (task.date != null) ...[
-                  const SizedBox(height: 8),
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                    decoration: BoxDecoration(
-                      color: AppColors.accent.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(6),
-                    ),
-                    child: Text(
-                      DateFormat('dd/MM/yyyy').format(task.date!),
-                      style: AppTextStyles.secondaryBodyText.copyWith(
-                        fontSize: 12,
-                        color: AppColors.accent,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ],
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
   }
 
   Widget _buildEmptyState() {

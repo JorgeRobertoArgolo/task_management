@@ -12,14 +12,14 @@ class TaskList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Obx(() {
-      if (controller.tasks.isEmpty) {
+      if (controller.activeTasks.isEmpty) {
         return const EmptyTaskPlaceholder();
       }
 
       return ListView.builder(
-        itemCount: controller.tasks.length,
+        itemCount: controller.activeTasks.length,
         itemBuilder: (context, index) {
-          final task = controller.tasks[index];
+          final task = controller.activeTasks[index];
           return TaskCard(task: task);
         },
       );

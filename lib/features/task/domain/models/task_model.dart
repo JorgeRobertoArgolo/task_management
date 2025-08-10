@@ -9,6 +9,7 @@ class Task {
   final bool status;
   final DateTime? date;
   final List<String>? specificWeekDays;
+  final DateTime? startDate;
 
   Task({
     required this.id,
@@ -18,6 +19,7 @@ class Task {
     required this.status,
     this.date,
     this.specificWeekDays,
+    this.startDate,
   });
 
   Map<String, dynamic> toMap() {
@@ -28,6 +30,7 @@ class Task {
       'status': status,
       'date': date != null ? Timestamp.fromDate(date!) : null,
       'specificWeekDays': specificWeekDays,
+      'startDate': startDate != null ? Timestamp.fromDate(startDate!) : null,
     };
   }
 
@@ -39,6 +42,7 @@ class Task {
     bool? status,
     DateTime? date,
     List<String>? specificWeekDays,
+    DateTime? startDate,
   }) {
     return Task(
       id: id ?? this.id,
@@ -48,6 +52,7 @@ class Task {
       status: status ?? this.status,
       date: date ?? this.date,
       specificWeekDays: specificWeekDays ?? this.specificWeekDays,
+      startDate: startDate ?? this.startDate,
     );
   }
 
@@ -63,6 +68,7 @@ class Task {
       specificWeekDays: data['specificWeekDays'] != null
           ? List<String>.from(data['specificWeekDays'])
           : null,
+      startDate: data['startDate'] != null ? (data['startDate'] as Timestamp).toDate() : null,  // novo
     );
   }
 

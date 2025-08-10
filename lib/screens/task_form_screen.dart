@@ -58,6 +58,24 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
       return;
     }
 
+    final today = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
+
+    DateTime? adjustedStartDate;
+
+    if (_selectedFrequency == Frequency.daily) {
+      if (_isEditing && _editingTask != null && _editingTask!.startDate != null) {
+        if (_editingTask!.startDate!.isBefore(today)) {
+          adjustedStartDate = today;
+        } else {
+          adjustedStartDate = _editingTask!.startDate!;
+        }
+      } else {
+        adjustedStartDate = today;
+      }
+    } else {
+      adjustedStartDate = null;
+    }
+
     final task = Task(
       id: _editingTask?.id ?? UniqueKey().toString(),
       title: _titleController.text.trim(),
@@ -66,6 +84,7 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
       status: _editingTask?.status ?? false,
       specificWeekDays: _selectedFrequency == Frequency.specificDays ? _selectedWeekDays : null,
       date: _selectedFrequency == Frequency.once ? _selectedDate : null,
+      startDate: adjustedStartDate,
     );
 
     if (_isEditing) {

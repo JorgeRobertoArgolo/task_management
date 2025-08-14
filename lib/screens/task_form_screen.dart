@@ -60,8 +60,16 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
 
     final today = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
 
-    DateTime? adjustedStartDate;
+    if (_selectedFrequency == Frequency.once && _selectedDate != null) {
+      final selected = DateTime(_selectedDate!.year, _selectedDate!.month, _selectedDate!.day);
+      if (selected.isBefore(today)) {
+        Get.snackbar("Data inválida", "Não é possível criar tarefas para dias passados.",
+            backgroundColor: Colors.redAccent, colorText: Colors.white);
+        return;
+      }
+    }
 
+    DateTime? adjustedStartDate;
     if (_selectedFrequency == Frequency.daily) {
       if (_isEditing && _editingTask != null && _editingTask!.startDate != null) {
         if (_editingTask!.startDate!.isBefore(today)) {
@@ -255,7 +263,7 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
         final picked = await showDatePicker(
           context: context,
           initialDate: _selectedDate ?? DateTime.now(),
-          firstDate: DateTime.now().subtract(const Duration(days: 365)),
+          firstDate: DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day),
           lastDate: DateTime.now().add(const Duration(days: 365 * 5)),
         );
         if (picked != null) setState(() => _selectedDate = picked);
@@ -271,7 +279,9 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
           children: [
             Text(
                 _selectedDate != null ? DateFormat.yMMMMd('pt_BR').format(_selectedDate!) : 'Selecione uma data',
-                style: AppTextStyles.bodyText.copyWith(fontWeight: FontWeight.w500, color: _selectedDate != null ? AppColors.primaryText : AppColors.secondaryText)
+                style: AppTextStyles.bodyText.copyWith(
+                    fontWeight: FontWeight.w500,
+                    color: _selectedDate != null ? AppColors.primaryText : AppColors.secondaryText)
             ),
             const Icon(CupertinoIcons.calendar, color: AppColors.secondaryText),
           ],
@@ -279,6 +289,7 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
       ),
     );
   }
+
 
   Widget _buildWeekDaySelector() {
     return Row(

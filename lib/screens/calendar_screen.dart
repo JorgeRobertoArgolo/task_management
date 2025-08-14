@@ -78,7 +78,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
 
   List<Task> _getTasksForDay(DateTime day) {
     const weekDayMap = {"Seg": 1, "Ter": 2, "Qua": 3, "Qui": 4, "Sex": 5, "Sáb": 6, "Dom": 7};
-    return taskController.tasks.where((task) {
+    return taskController.upcomingTasks.where((task) {
       if (task.frequency == Frequency.daily) return true;
       if (task.frequency == Frequency.once) return task.date != null && isSameDay(task.date, day);
       if (task.frequency == Frequency.specificDays) {

@@ -66,9 +66,28 @@ class TaskController extends GetxController {
   }
 
 
-  //Função auxiliar
   DateTime onlyDate(DateTime dt) {
     return DateTime(dt.year, dt.month, dt.day);
+  }
+
+  RxList<Task> get upcomingTasks {
+    final today = onlyDate(DateTime.now());
+
+    final filtered = tasks.where((task) {
+      if (task.frequency == Frequency.once) {
+        if (task.date == null) return false;
+        return !onlyDate(task.date!).isBefore(today);
+      } else if (task.frequency == Frequency.daily) {
+        if (task.startDate == null) return false;
+        return !onlyDate(task.startDate!).isBefore(today);
+      } else if (task.frequency == Frequency.specificDays) {
+        if (task.specificWeekDays == null) return false;
+        return true;
+      }
+      return false;
+    }).toList();
+
+    return filtered.obs;
   }
 
 }

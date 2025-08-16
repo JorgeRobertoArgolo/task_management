@@ -60,14 +60,23 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
 
     final today = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
 
-    if (_selectedFrequency == Frequency.once && _selectedDate != null) {
-      final selected = DateTime(_selectedDate!.year, _selectedDate!.month, _selectedDate!.day);
-      if (selected.isBefore(today)) {
-        Get.snackbar("Data inválida", "Não é possível criar tarefas para dias passados.",
-            backgroundColor: Colors.redAccent, colorText: Colors.white);
+    if (_selectedFrequency == Frequency.specificDays) {
+      final nowWeekday = today.weekday;
+      final selectedIndexes = _selectedWeekDays.map((d) => _weekDays.indexOf(d) + 1).toList();
+
+      final onlyPastDays = selectedIndexes.every((day) => day < nowWeekday);
+
+      if (onlyPastDays) {
+        Get.snackbar(
+          "Dias inválidos",
+          "Os dias escolhidos já passaram nesta semana. Escolha dias de hoje em diante.",
+          backgroundColor: Colors.redAccent,
+          colorText: Colors.white,
+        );
         return;
       }
     }
+
 
     DateTime? adjustedStartDate;
     if (_selectedFrequency == Frequency.daily) {

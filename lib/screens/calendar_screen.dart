@@ -78,14 +78,26 @@ class _CalendarScreenState extends State<CalendarScreen> {
 
   List<Task> _getTasksForDay(DateTime day) {
     const weekDayMap = {"Seg": 1, "Ter": 2, "Qua": 3, "Qui": 4, "Sex": 5, "Sáb": 6, "Dom": 7};
+    final today = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
+
     return taskController.upcomingTasks.where((task) {
-      if (task.frequency == Frequency.daily) return true;
-      if (task.frequency == Frequency.once) return task.date != null && isSameDay(task.date, day);
+      if (task.frequency == Frequency.daily) {
+        final start = task.startDate ?? today;
+        return !day.isBefore(start);
+      }
+
+      if (task.frequency == Frequency.once) {
+        return task.date != null && isSameDay(task.date, day);
+      }
+
       if (task.frequency == Frequency.specificDays) {
         final int diaDaSemanaCalendario = day.weekday;
         if (task.specificWeekDays == null || task.specificWeekDays!.isEmpty) return false;
-        return task.specificWeekDays!.any((d) => weekDayMap[d] == diaDaSemanaCalendario);
+
+        final matchesWeekDay = task.specificWeekDays!.any((d) => weekDayMap[d] == diaDaSemanaCalendario);
+        return matchesWeekDay && !day.isBefore(today);
       }
+
       return false;
     }).toList();
   }
